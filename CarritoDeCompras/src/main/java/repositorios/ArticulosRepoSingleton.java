@@ -20,17 +20,15 @@ public class ArticulosRepoSingleton implements ArticuloRepo {
 	private List<Articulo> listaArticulos;
 	
 	private ArticulosRepoSingleton() {
-		//para probar
 		this.listaArticulos = new ArrayList<Articulo>();
-		Articulo articulo1 = new Articulo(1234567, "Horno Electrico", "atma", 12000, 2);
-		Articulo articulo2 = new Articulo(5678904, "Horno no Electrico", "no atma", 10000, 23);
-		Articulo articulo3 = new Articulo(7654321, "Horno para helados", "heladorno", 100000, 100);
-
-
-		this.insert(articulo1);
-		this.insert(articulo2);
-		this.insert(articulo3);
-
+		
+		Articulo art1 = new Articulo(1234567, "Horno Electrico", "Atma - 14 litros", 123000.99, 29);
+		Articulo art2 = new Articulo(5678904, "Heladera", "Eslabón de lujo. Medidas: 160x70x70", 450000.99, 23);
+		Articulo art3 = new Articulo(7654321, "Microondas", "Samsung; 20 litros.", 100000.99, 10);
+		
+		this.insert(art1);
+		this.insert(art2);
+		this.insert(art3);
 	}
 	
 	//trae los objetos de AtriculoRepo

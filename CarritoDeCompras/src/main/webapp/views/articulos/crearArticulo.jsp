@@ -10,7 +10,9 @@
 	<h1>cargar un articulo</h1>
 	<h3>completá el siguiente formulario:</h3>
 
-	<form action="" method="post">
+	<form action="articulos" method="post">
+	<input type ="hidden" value="insert" name="accion"></input>
+	
 		<p>
 			codigo: <input value="" name="codigo" />
 		</p>

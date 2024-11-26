@@ -20,13 +20,17 @@ import repositorios.interfaces.ArticuloRepo;
 @WebServlet("/articulos")
 public class ArticulosController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-       
+     
 	
+	//instanciar el repositorio para no repetir tanto codigo en los metodos
+	private ArticuloRepo articulosrepo;
 	
     /**
      * @see HttpServlet#HttpServlet()
      */
     public ArticulosController() {
+    	this.articulosrepo = ArticulosRepoSingleton.getInstance();
+    	
     }
 
     
@@ -47,40 +51,42 @@ public class ArticulosController extends HttpServlet {
 		}
 	}
 
+	
+	
+	private void getIndex(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		request.getRequestDispatcher("index.jsp").forward(request, response);
+
+	}
+	
+	
+	
 	private void getCrear(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		request.getRequestDispatcher("crearArticulo.jsp").forward(request, response);
+		request.getRequestDispatcher("views/articulos/crearArticulo.jsp").forward(request, response);
 	}
 
+	
+	
+	
 	private void getEditar(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String stringId = request.getParameter("id");
 		int id = Integer.parseInt(stringId);
-		
-		ArticuloRepo repo = ArticulosRepoSingleton.getInstance();
-		
-		Articulo art = repo.findById(id);
+				
+	    Articulo art = articulosrepo.findById(id);
 		
 		request.setAttribute("articulo", art);
-		request.getRequestDispatcher("editarArticulo.jsp").forward(request, response);
-	}
-
-	private void getListado(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		ArticuloRepo repo = ArticulosRepoSingleton.getInstance();
-		
-		List<Articulo> listaArticulos = repo.getAll();
-		
-		request.setAttribute("listado", listaArticulos);
-		
-		request.getRequestDispatcher("listadoArticulos.jsp").forward(request, response);
-
-
-	}
-
-	private void getIndex(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		request.getRequestDispatcher("inicioSesion.jsp").forward(request, response);
+		request.getRequestDispatcher("views/articulos/editarArticulo.jsp").forward(request, response);
 
 	}
 
 	
+	
+	private void getListado(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		List<Articulo> listaArticulos = articulosrepo.getAll();
+		request.setAttribute("listado", listaArticulos);
+
+		request.getRequestDispatcher("views/articulos/listadoArticulos.jsp").forward(request, response);
+	}
+
 	
 	
 	
@@ -88,30 +94,94 @@ public class ArticulosController extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		String accion = request.getParameter("accion");
+		if(accion == null) {
+			response.sendError(400, "No se brindó una acción.");
+			return;
+			
+			
+		}
 		
-		ArticuloRepo repo = ArticulosRepoSingleton.getInstance();
+		switch(accion) {
+		case "insert" -> postInsertar(request, response);
+		case "actualizar" -> postActualizar(request, response);
+		case "eliminar" -> postEliminar(request, response);
+		default -> response.sendError(404, "Accion no disponible: " + accion);	
+		}
+	}
+	
+	
+	
+	
+	private void postEliminar(HttpServletRequest request, HttpServletResponse response)  throws ServletException, IOException {
+		String sId = request.getParameter("id");
+		int id = Integer.parseInt(sId);	
+		
+		articulosrepo.delete(id);
+		response.sendRedirect("articulos?accion=listado");
 
 		
+	}
+
+
+
+	private void postActualizar(HttpServletRequest request, HttpServletResponse response)  throws ServletException, IOException {
+		
+		String sId = request.getParameter("id");
+		int id = Integer.parseInt(sId);		
+				
 		String scodigo = request.getParameter("codigo");
 		int codigo = Integer.parseInt(scodigo);
-
+		
 		String nombre = request.getParameter("nombre");
-
+		
 		String descripcion = request.getParameter("descripcion");
-
+		
 		String sPrecio = request.getParameter("precio");
-		int precio = Integer.parseInt(sPrecio);
+		Double precio = Double.parseDouble(sPrecio);
 		
 		String sStock = request.getParameter("stock");
 		int stock = Integer.parseInt(sStock);
 		
 		
+		Articulo art = articulosrepo.findById(id);
+
+		art.setCodigo(codigo);
+		art.setNombre(nombre);
+		art.setDescripcion(descripcion);
+		art.setPrecio(precio);
+		art.setStock(stock);
+		
+		//no aplica para este proyecto, pero es para guardarel articulo en una base de datos
+		articulosrepo.update(art);
+		
+		
+		response.sendRedirect("articulos?accion=listado");
+	}
+
+
+
+	protected void postInsertar(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+				
+		String scodigo = request.getParameter("codigo");
+		int codigo = Integer.parseInt(scodigo);
+		
+		String nombre = request.getParameter("nombre");
+		
+		String descripcion = request.getParameter("descripcion");
+		
+		String sPrecio = request.getParameter("precio");
+		Double precio = Double.parseDouble(sPrecio);
+		
+		String sStock = request.getParameter("stock");
+		int stock = Integer.parseInt(sStock);
+		
 		
 		Articulo art = new Articulo(codigo, nombre, descripcion, precio, stock);
 		
-		repo.insert(art);
+		articulosrepo.insert(art);
 		
-		response.sendRedirect("articulos");
+		response.sendRedirect("articulos?accion=listado");
+	
 	}
-
 }

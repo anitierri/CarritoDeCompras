@@ -5,7 +5,6 @@
 
 
 
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -13,7 +12,6 @@
 <title>Listado de articulos</title>
 </head>
 <body>
-
 	<a href="articulos?accion=crear">Agregar Articulo</a>
 	<h1>Listado de articulos</h1>
 	<table border="1">
@@ -25,7 +23,7 @@
 				<th>Descripcion</th>
 				<th>Precio</th>
 				<th>Stock</th>
-				<th> <a href="articulos?accion=editar&id=${articulo.id}">Editar</a> </th>
+				<th>Acciones</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -37,6 +35,12 @@
 					<td><c:out value="${articulo.descripcion}" /></td>
 					<td><c:out value="${articulo.precio}" /></td>
 					<td><c:out value="${articulo.stock}" /></td>
+					<td><a href="articulos?accion=editar&id=${articulo.id }">editar</a>
+						<form action="articulos" method="post" style="display:inline;">
+							<input type="hidden" name="id" value="${articulo.id }"> 
+							<input type="hidden" name="accion" value="eliminar"> 
+							<input type="submit" value="Eliminar">
+						</form></td>
 				</tr>
 			</c:forEach>
 		</tbody>

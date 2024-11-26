@@ -7,6 +7,8 @@
 <title>Insert title here</title>
 </head>
 <body>
+<h2>¡bienvenido!</h2>
+<a href="articulos?accion=listado">Ver listado de artículos</a>
 
 </body>
 </html>
