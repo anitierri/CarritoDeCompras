@@ -4,11 +4,14 @@
 <html>
 <head>
 <meta charset="ISO-8859-1">
-<title>Insert title here</title>
+<title>Inicio</title>
+<link rel="stylesheet" href="css/">
+
 </head>
 <body>
 <h2>¡bienvenido!</h2>
-<a href="articulos?accion=listado">Ver listado de artículos</a>
+<a href="auth?accion=login">Iniciar sesion</a>
+
 
 </body>
 </html>

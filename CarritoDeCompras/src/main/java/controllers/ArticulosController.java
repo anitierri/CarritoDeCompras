@@ -43,7 +43,6 @@ public class ArticulosController extends HttpServlet {
 		accion = Optional.ofNullable(accion).orElse("index");
 		
 		switch(accion) {
-		case "index" -> getIndex(request,response);
 		case "listado" -> getListado(request,response);
 		case "editar" -> getEditar(request,response);
 		case "crear" -> getCrear(request,response);
@@ -52,11 +51,6 @@ public class ArticulosController extends HttpServlet {
 	}
 
 	
-	
-	private void getIndex(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		request.getRequestDispatcher("index.jsp").forward(request, response);
-
-	}
 	
 	
 	
