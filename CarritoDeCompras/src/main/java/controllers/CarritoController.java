@@ -2,14 +2,22 @@ package controllers;
 
 import models.Carrito;
 import models.Usuario;
+import models.Venta;
 import models.Articulo;
+import models.ArticuloCantidad;
 import repositorios.ArticulosRepoSingleton;
 import repositorios.CarritoRepoSingleton;
+import repositorios.SaldoRepoSingleton;
+import repositorios.VentasRepoSingleton;
+import repositorios.interfaces.ArticuloRepo;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
@@ -29,9 +37,7 @@ public class CarritoController extends HttpServlet {
 		accion = Optional.ofNullable(accion).orElse("index");
 
 		switch (accion) {
-		case "listado":
-			getListado(request, response);
-			break;
+
 		case "ver":
 			getVer(request, response);
 			break;
@@ -40,46 +46,8 @@ public class CarritoController extends HttpServlet {
 		}
 	}
 
-	protected void doPost(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		String accion = request.getParameter("accion");
-		if (accion == null) {
-			response.sendError(400, "No se brindó una acción.");
-			return;
-		}
-
-		switch (accion) {
-		case "agregar":
-			postAgregarArticulo(request, response);
-			break;
-		case "eliminar":
-			postEliminarArticulo(request, response);
-			break;
-		case "finalizar":
-			postFinalizarCompra(request, response);
-			break;
-		case "pagar":
-			postPagar(request, response);
-			break;
-		default:
-			response.sendError(404, "Acción no disponible: " + accion);
-		}
-	}
-
-	private void getListado(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		List<Carrito> listaCarritos = carritosRepo.getAll();
-		request.setAttribute("listado", listaCarritos);
-		request.getRequestDispatcher("views/carrito/Carrito.jsp").forward(request, response);
-	}
-
 	private void getVer(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		Usuario usuario = (Usuario) request.getSession().getAttribute("usuario");
-
-		if (usuario == null) {
-			response.sendError(401, "Usuario no autenticado");
-			return;
-		}
 
 		Integer idCarrito = (Integer) request.getSession().getAttribute("idCarrito");
 
@@ -94,6 +62,100 @@ public class CarritoController extends HttpServlet {
 			}
 		} else {
 			response.sendError(404, "Carrito no disponible");
+		}
+	}
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		String accion = request.getParameter("accion");
+		if (accion == null) {
+			response.sendError(400, "No se brindó una acción.");
+			return;
+		}
+		HttpSession session = request.getSession(false);
+
+		if (session == null || session.getAttribute("usuario") == null) {
+			response.sendRedirect("auth?accion=login");
+			return;
+		}
+
+		Usuario usuarioActual = (Usuario) request.getSession().getAttribute("usuario");
+
+		if ("EMPLEADO".equals(usuarioActual.getCategoria())) {
+			response.sendError(403, "No tenes permisos para realizar esta acción");
+			return;
+		}
+
+		switch (accion) {
+		case "agregar":
+			postAgregarArticulo(request, response);
+			break;
+		case "eliminar":
+			postEliminarArticulo(request, response);
+			break;
+		case "incrementar":
+			postIncrementarArticulo(request, response);
+			break;
+		case "decrementar":
+			postDecrementarArticulo(request, response);
+			break;
+		case "finalizar":
+			postFinalizarCompra(request, response);
+			break;
+		case "pagar":
+			postPagar(request, response);
+			break;
+		default:
+			response.sendError(404, "Acción no disponible: " + accion);
+		}
+	}
+
+	private void postIncrementarArticulo(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		Integer idCarrito = (Integer) request.getSession().getAttribute("idCarrito");
+
+		String sIdArticulo = request.getParameter("idArticulo");
+		int idArticulo = Integer.parseInt(sIdArticulo);
+
+		Articulo articulo = ArticulosRepoSingleton.getInstance().findById(idArticulo);
+
+		if (articulo != null) {
+			Carrito carrito = carritosRepo.findById(idCarrito);
+			int cantidadEnCarrito = carrito.getArticulos().stream()
+					.filter(ac -> ac.getArticulo().getId() == articulo.getId()).mapToInt(ArticuloCantidad::getCantidad)
+					.sum();
+
+			if (cantidadEnCarrito + 1 <= articulo.getStock()) {
+				carritosRepo.incrementarArticulo(idCarrito, articulo);
+				response.sendRedirect("carrito?accion=ver");
+			} else {
+				request.getSession().setAttribute("errorStock", "No hay suficiente stock disponible");
+				response.sendRedirect("carrito?accion=ver&error=stock");
+			}
+		} else {
+			response.sendError(404, "Artículo no encontrado");
+		}
+	}
+
+	private void postDecrementarArticulo(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		Integer idCarrito = (Integer) request.getSession().getAttribute("idCarrito");
+
+		if (idCarrito == null) {
+			response.sendError(404, "Carrito no encontrado");
+			return;
+		}
+
+		String sIdArticulo = request.getParameter("idArticulo");
+		int idArticulo = Integer.parseInt(sIdArticulo);
+
+		Articulo articulo = ArticulosRepoSingleton.getInstance().findById(idArticulo);
+
+		if (articulo != null) {
+			carritosRepo.decrementarArticulo(idCarrito, articulo);
+			response.sendRedirect("carrito?accion=ver");
+		} else {
+			response.sendError(404, "Artículo no encontrado");
 		}
 	}
 
@@ -129,8 +191,18 @@ public class CarritoController extends HttpServlet {
 		Articulo articulo = ArticulosRepoSingleton.getInstance().findById(idArticulo);
 
 		if (articulo != null) {
-			carritosRepo.agregarArticulo(idCarrito, articulo);
-			response.sendRedirect("carrito?accion=ver&id=" + idCarrito);
+			Carrito carrito = carritosRepo.findById(idCarrito);
+			int cantidadEnCarrito = carrito.getArticulos().stream()
+					.filter(ac -> ac.getArticulo().getId() == articulo.getId()).mapToInt(ArticuloCantidad::getCantidad)
+					.sum();
+
+			if (cantidadEnCarrito + 1 <= articulo.getStock()) {
+				carritosRepo.agregarArticulo(idCarrito, articulo);
+				response.sendRedirect("carrito?accion=ver&id=" + idCarrito);
+			} else {
+				request.getSession().setAttribute("errorStock", "No hay suficiente stock disponible");
+				response.sendRedirect("catalogo?error=stock");
+			}
 		} else {
 			response.sendError(404, "Artículo no encontrado");
 		}
@@ -185,7 +257,13 @@ public class CarritoController extends HttpServlet {
 
 	private void postPagar(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		Usuario usuario = (Usuario) request.getSession().getAttribute("usuario");
 		Integer idCarrito = (Integer) request.getSession().getAttribute("idCarrito");
+
+		if (usuario == null) {
+			response.sendError(401, "Usuario no autenticado");
+			return;
+		}
 
 		if (idCarrito == null) {
 			response.sendError(404, "Carrito no encontrado");
@@ -193,14 +271,35 @@ public class CarritoController extends HttpServlet {
 		}
 
 		Carrito carrito = carritosRepo.findById(idCarrito);
+		double total = carrito.calcularTotal();
+		double saldoActual = SaldoRepoSingleton.getInstance().obtenerSaldoActual(usuario.getId());
 
-		if (carrito != null) {
-			carrito.setEstado("finalizado");
-			carritosRepo.actualizarCarrito(carrito);
-
-			response.sendRedirect("articulos?accion=listado");
-		} else {
-			response.sendError(404, "Carrito no encontrado");
+		if (total > saldoActual) {
+			response.sendRedirect("saldo?accion=recarga");
+			return;
 		}
+
+		for (ArticuloCantidad articuloCantidad : carrito.getArticulos()) {
+			Articulo articulo = articuloCantidad.getArticulo();
+			int cantidad = articuloCantidad.getCantidad();
+
+			articulo.setStock(articulo.getStock() - cantidad);
+			ArticuloRepo.actualizarArticulo(articulo);
+		}
+
+		Venta venta = new Venta();
+		venta.setIdUsuario(usuario.getId());
+		venta.setTotal(total);
+		venta.setArticulos(carrito.getArticulos());
+		venta.setEstado("finalizado");
+
+		VentasRepoSingleton.getInstance().registrarVenta(venta);
+
+		carrito.setEstado("finalizado");
+		carritosRepo.actualizarCarrito(carrito);
+
+		request.getSession().removeAttribute("idCarrito");
+
+		response.sendRedirect("ventas?doGet");
 	}
 }

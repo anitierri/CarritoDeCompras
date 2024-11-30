@@ -1,80 +1,71 @@
-@charset "ISO-8859-1";
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
-    margin: 0;
-    padding: 0;
+:root {
+    --color-primary: #3498db;
+    --color-table-header: #2980b9;
+    --color-table-row-hover: #f1f3f5;
+    --color-table-border: #e0e6ed;
 }
 
-.login-container {
-    width: 300px;
-    margin: 100px auto;
-    padding: 20px;
-    background-color: #fff;
+table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
 }
 
-h2 {
-    text-align: center;
-    color: #333;
-}
-
-.form-group {
-    margin-bottom: 15px;
-}
-
-label {
-    display: block;
-    margin-bottom: 5px;
-    color: #555;
-}
-
-input[type="text"],
-input[type="password"] {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-}
-
-input[type="text"]:focus,
-input[type="password"]:focus {
-    border-color: #007bff;
-    outline: none;
-}
-
-button {
-    width: 100%;
-    padding: 10px;
-    background-color: #007bff;
+table thead {
+    background-color: var(--color-table-header);
     color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
 }
 
-button:hover {
-    background-color: #0056b3;
+table th {
+    padding: 15px;
+    text-align: left;
+    text-transform: uppercase;
+    font-weight: 600;
+    font-size: 0.9em;
+    letter-spacing: 0.5px;
 }
 
-.error-message {
-    color: red;
-    text-align: center;
+table td {
+    padding: 15px;
+    border-bottom: 1px solid var(--color-table-border);
+}
+
+table tbody tr:hover {
+    background-color: var(--color-table-row-hover);
+}
+
+table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.articulos-subTable {
+    width: 100%;
     margin-top: 10px;
+    border: 1px solid var(--color-table-border);
+    border-radius: 6px;
 }
 
-p {
-    text-align: center;
+.articulos-subTable th {
+    background-color: #f8f9fa;
+    color: #495057;
+    font-size: 0.8em;
 }
 
-a {
-    color: #007bff;
+a, a.btn {
+    display: inline-block;
+    background-color: var(--color-primary);
+    color: white;
+    padding: 10px 15px;
     text-decoration: none;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+    margin: 5px;
 }
 
-a:hover {
-    text-decoration: underline;
+a:hover, a.btn:hover {
+    background-color: #2980b9;
 }

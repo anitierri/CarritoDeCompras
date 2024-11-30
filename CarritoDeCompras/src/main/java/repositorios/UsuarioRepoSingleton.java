@@ -1,12 +1,10 @@
 package repositorios;
 
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
 import models.Usuario;
 import repositorios.interfaces.UsuarioRepo;
-import utils.ContrasenaHash;
 
 public class UsuarioRepoSingleton implements UsuarioRepo {
 
@@ -23,28 +21,39 @@ public class UsuarioRepoSingleton implements UsuarioRepo {
 
 	private UsuarioRepoSingleton() {
 		this.listaUsuarios = new ArrayList<Usuario>();
-		try {
-			Usuario user1 = new Usuario();
-			user1.setNombre("pepe manolo");
-			user1.setContrasena(ContrasenaHash.encriptar("soypepem4nolo"));
-			user1.setCategoria("EMPLEADO");
+		Usuario usuario1 = new Usuario();
+		usuario1.setNombre("pepe manolo");
+		usuario1.setContrasena("soypepem4nolo");
+		usuario1.setDni(12345678);
+		usuario1.setCategoria("EMPLEADO");
 
-			Usuario user2 = new Usuario();
-			user2.setNombre("alberto rodriguez");
-			user2.setContrasena(ContrasenaHash.encriptar("1234"));
-			user2.setCategoria("CLIENTE");
+		Usuario usuario2 = new Usuario();
+		usuario2.setNombre("alberto rodriguez");
+		usuario2.setContrasena("1234");
+		usuario2.setDni(87654321);
+		usuario2.setCategoria("CLIENTE");
 
-			this.insert(user1);
-			this.insert(user2);
+		Usuario usuario3 = new Usuario();
+		usuario3.setNombre("macarena macarenita");
+		usuario3.setContrasena("4321");
+		usuario3.setDni(23456789);
+		usuario3.setCategoria("CLIENTE");
 
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-		}
+		this.insert(usuario1);
+		this.insert(usuario2);
+		this.insert(usuario3);
+
 	}
 
 	@Override
 	public Usuario findbyNombre(String nombre) {
-		return this.listaUsuarios.stream().filter(user -> user.getNombre().equals(nombre.toLowerCase())).findAny().orElse(null);
+		return this.listaUsuarios.stream().filter(user -> user.getNombre().equals(nombre.toLowerCase())).findAny()
+				.orElse(null);
+	}
+
+	@Override
+	public Usuario findByDni(int dni) {
+		return this.listaUsuarios.stream().filter(usuario -> usuario.getDni() == dni).findFirst().orElse(null);
 	}
 
 	@Override
@@ -59,6 +68,11 @@ public class UsuarioRepoSingleton implements UsuarioRepo {
 		usuario.setId(ultId + 1);
 
 		this.listaUsuarios.add(usuario);
+	}
+
+	@Override
+	public List<Usuario> getAll() {
+		return new ArrayList<>(this.listaUsuarios);
 	}
 
 }

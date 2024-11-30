@@ -1,51 +1,86 @@
 package models;
 
+import java.time.LocalDateTime;
+
 public class Saldo {
-	int idSaldo;
-	int idUsuario;
-	int monto;
-	
-	
+	private int id;
+	private int idUsuario;
+	private double monto;
+	private String tipo;
+	private LocalDateTime fecha;
+	private int usuarioOrigen;
+	private int usuarioDestino;
+
 	public Saldo() {
-		super();
+		this.fecha = LocalDateTime.now();
 	}
-	
-	public Saldo(int idUsuario, int monto) {
-		super();
+
+	public Saldo(int idUsuario, double monto, String tipo) {
 		this.idUsuario = idUsuario;
 		this.monto = monto;
+		this.tipo = tipo;
+		this.fecha = LocalDateTime.now();
 	}
-	
-	
-	
-	public int getIdSaldo() {
-		return idSaldo;
+
+	public int getId() {
+		return id;
 	}
-	public void setIdSaldo(int idSaldo) {
-		this.idSaldo = idSaldo;
+
+	public void setId(int id) {
+		this.id = id;
 	}
+
 	public int getIdUsuario() {
 		return idUsuario;
 	}
+
 	public void setIdUsuario(int idUsuario) {
 		this.idUsuario = idUsuario;
 	}
-	public int getMonto() {
+
+	public double getMonto() {
 		return monto;
 	}
-	public void setMonto(int monto) {
+
+	public void setMonto(double monto) {
 		this.monto = monto;
 	}
-	
-	
-	
-	
+
+	public String getTipo() {
+		return tipo;
+	}
+
+	public void setTipo(String tipo) {
+		this.tipo = tipo;
+	}
+
+	public LocalDateTime getFecha() {
+		return fecha;
+	}
+
+	public void setFecha(LocalDateTime fecha) {
+		this.fecha = fecha;
+	}
+
+	public int getUsuarioOrigen() {
+		return usuarioOrigen;
+	}
+
+	public void setUsuarioOrigen(int usuarioOrigen) {
+		this.usuarioOrigen = usuarioOrigen;
+	}
+
+	public int getUsuarioDestino() {
+		return usuarioDestino;
+	}
+
+	public void setUsuarioDestino(int usuarioDestino) {
+		this.usuarioDestino = usuarioDestino;
+	}
+
 	@Override
 	public String toString() {
-		return "Saldo [idSaldo=" + idSaldo + ", idUsuario=" + idUsuario + ", monto=" + monto + "]";
+		return "Saldo{" + "id=" + id + ", idUsuario=" + idUsuario + ", monto=" + monto + ", tipo='" + tipo + '\''
+				+ ", fecha=" + fecha + '}';
 	}
-	
-	
-	
-	
 }

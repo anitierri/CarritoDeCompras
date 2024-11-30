@@ -18,10 +18,13 @@
 			<input type="hidden" name="accion" value="crearCuenta">
 
 			<div class="form-group">
-				<label for="nombre">Nombre y apellido:</label> <input type="text"
+				<label for="nombre">Nombre y apellido completos:</label> <input type="text"
 					id="nombre" name="nombre" required>
 			</div>
-
+			<div class="form-group">
+				<label for="dni">DNI:</label> <input type="number" id="dni"
+					name="dni" required>
+			</div>
 			<div class="form-group">
 				<label for="contrasena">Contraseña:</label> <input type="password"
 					id="contrasena" name="contrasena" required>

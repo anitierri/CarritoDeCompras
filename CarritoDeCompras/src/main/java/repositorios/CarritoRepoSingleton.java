@@ -2,6 +2,8 @@ package repositorios;
 
 import models.Carrito;
 import models.Articulo;
+import models.ArticuloCantidad;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,6 +46,30 @@ public class CarritoRepoSingleton {
 		if (carrito != null) {
 			carrito.eliminarArticulo(articulo);
 		}
+	}
+
+	public void incrementarArticulo(Integer idCarrito, Articulo articulo) {
+		Carrito carrito = findById(idCarrito);
+		for (ArticuloCantidad ac : carrito.getArticulos()) {
+			if (ac.getArticulo().getId() == articulo.getId()) {
+				ac.setCantidad(ac.getCantidad() + 1);
+				break;
+			}
+		}
+		actualizarCarrito(carrito);
+	}
+
+	public void decrementarArticulo(Integer idCarrito, Articulo articulo) {
+		Carrito carrito = findById(idCarrito);
+		for (ArticuloCantidad ac : carrito.getArticulos()) {
+			if (ac.getArticulo().getId() == articulo.getId()) {
+				if (ac.getCantidad() > 1) {
+					ac.setCantidad(ac.getCantidad() - 1);
+				}
+				break;
+			}
+		}
+		actualizarCarrito(carrito);
 	}
 
 	public List<Carrito> getAll() {

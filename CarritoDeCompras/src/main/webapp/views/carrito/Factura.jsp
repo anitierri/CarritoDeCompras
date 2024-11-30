@@ -5,11 +5,11 @@
 <head>
 <meta charset="UTF-8">
 <title>Factura de Compra</title>
+<link rel="stylesheet" href="css/styles.css">
+
 </head>
 <body>
 	<h1>Factura de Compra</h1>
-	<h2>Carrito ID: ${carrito.id}</h2>
-	<h3>Estado: ${carrito.estado}</h3>
 
 	<table border="1">
 		<thead>
@@ -38,7 +38,12 @@
 		<input type="hidden" name="accion" value="pagar"> <input
 			type="submit" value="Confirmar Pago">
 	</form>
+	<br>
 
+	<a href="articulos?accion=listado">Volver al listado de articulos</a>
 	<a href="carrito?accion=ver">Volver al Carrito</a>
+	<a href="saldo?accion=historial">No tenes suficiente dinero? Ir al
+		módulo de saldo </a>
+
 </body>
 </html>

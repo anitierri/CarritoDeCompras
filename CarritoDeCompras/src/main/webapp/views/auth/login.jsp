@@ -18,8 +18,8 @@
 			<input type="hidden" name="accion" value="login">
 
 			<div class="form-group">
-				<label for="nombre">Nombre y apellido:</label> <input type="text"
-					id="nombre" name="nombre" required>
+				<label for="dni">DNI:</label> <input type="number" id="dni"
+					name="dni" required>
 			</div>
 
 			<div class="form-group">
@@ -37,7 +37,8 @@
 		</form>
 
 		<p>
-			No tenes una cuenta? <a href="auth?accion=crearCuenta">Crear una cuenta</a>
+			No tenes una cuenta? <a href="auth?accion=crearCuenta">Crear una
+				cuenta</a>
 		</p>
 	</div>
 </body>

@@ -5,14 +5,16 @@
 <head>
 <meta charset="ISO-8859-1">
 <title>crear articulo</title>
+<link rel="stylesheet" href="css/styles.css">
+
 </head>
 <body>
 	<h1>cargar un articulo</h1>
 	<h3>completá el siguiente formulario:</h3>
 
 	<form action="articulos" method="post">
-	<input type ="hidden" value="insert" name="accion"></input>
-	
+		<input type="hidden" value="insert" name="accion"></input>
+
 		<p>
 			codigo: <input value="" name="codigo" />
 		</p>
@@ -28,8 +30,12 @@
 		<p>
 			stock: <input value="" name="stock" />
 		</p>
-		<input type="submit" value="Guardar"/>
+		<input type="submit" value="Guardar" />
 
 	</form>
+	<br>
+
+	<a href="articulos?accion=listado">Volver al listado de articulos</a>
+
 </body>
 </html>
